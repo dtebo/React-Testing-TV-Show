@@ -1,8 +1,9 @@
 import React from 'react';
-import { render, getByDisplayValue, fireEvent, waitFor, wait, queryAllByAltText, queryAllByTestId } from '@testing-library/react';
+import { render, getByDisplayValue, fireEvent, waitFor, wait, queryAllByAltText, queryAllByTestId, getByTestId, getAllByTestId } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import App from '../App';
+import Episodes from '../components/Episodes';
 
 import { fetchShow as mockFetchShow } from '../api/fetchShow';
 import { act } from 'react-dom/test-utils';
@@ -162,10 +163,10 @@ const mockData = {
         };
 
 
-test('episodes render correctly', async () => {
+test('dropdown value selects correctly', async () => {
     mockFetchShow.mockResolvedValueOnce({ data: mockData });
 
-    const { getByText, queryAllByTestId } = render(<App />);
+    const { getByText, getAllByTestId } = render(<App />);
 
     await waitFor(() => {});
 
@@ -174,6 +175,20 @@ test('episodes render correctly', async () => {
     dropdown.value = 'Season 1';
 
     await waitFor(() => {
-        expect(dropdown.value).toBe('Season 1')
+        expect(dropdown.value).toBe('Season 1');
+    });
+});
+
+test('episodes render correctly', async () => {
+    mockFetchShow.mockResolvedValueOnce({ data: mockData });
+    
+    const { rerender, getAllByTestId } = render(<Episodes episodes={[]} />);
+
+    rerender(<Episodes episodes={mockData._embedded.episodes} />);
+
+    const episodes = getAllByTestId(/episode/i);
+
+    await waitFor(() => {
+        expect(episodes).toHaveLength(5);
     });
 });
