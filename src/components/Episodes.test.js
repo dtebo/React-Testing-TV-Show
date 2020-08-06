@@ -163,15 +163,17 @@ const mockData = {
 
 
 test('episodes render correctly', async () => {
-    mockFetchShow.mockResolvedValueOnce({ data: mockData});
+    mockFetchShow.mockResolvedValueOnce({ data: mockData });
 
     const { getByText, queryAllByTestId } = render(<App />);
 
     await waitFor(() => {});
 
-    fireEvent.select(getByText(/select a season/i), {value: 'season 1'});
+    const dropdown = getByText(/select a season/i);
+
+    dropdown.value = 'Season 1';
 
     await waitFor(() => {
-        expect(queryAllByTestId('episodes')).toHaveLength(1);
+        expect(dropdown.value).toBe('Season 1')
     });
 });
